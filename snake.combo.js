@@ -1,6 +1,6 @@
 'use strict';
 
-var GRID_WIDTH = 33;
+var GRID_WIDTH = 31;
 var SNAKE_CELL = 1;
 var FOOD_CELL = 2;
 var UP = {x: 0, y: -1};
@@ -23,6 +23,7 @@ function main() {
   detectBrowserUrlWhitespaceEscaping();
   cleanUrl();
   setupEventHandlers();
+  drawMaxScore();
   initUrlRevealed();
   startGame();
 
@@ -125,13 +126,26 @@ function setupEventHandlers() {
   window.onblur = function pauseGame() {
     gamePaused = true;
     window.history.replaceState(null, null, location.hash + '[paused]');
-    document.title = document.title + '[p]';
+    // document.title = document.title + '[p]';
   };
 
   window.onfocus = function unpauseGame() {
     gamePaused = false;
     drawWorld();
   };
+
+}
+
+function drawMaxScore() {
+  var maxScore = localStorage.maxScore;
+  if (maxScore == null) {
+    maxScore = 0;
+    return;
+  }
+
+  var maxScorePoints = maxScore == 1 ? '1 point' : maxScore + ' points'
+  var docuMaxScorePoints = maxScore
+  var maxScoreGrid = localStorage.maxScoreGrid;
 
 }
 
@@ -203,11 +217,17 @@ function updateWorld() {
 function endGame() {
   var score = currentScore();
   console.log("Final score:", score);
+  var maxScore = parseInt(localStorage.maxScore || 0);
+  if (score > 0 && score > maxScore && hasMoved) {
+    localStorage.maxScore = score;
+    localStorage.maxScoreGrid = gridString();
+    drawMaxScore();
+  }
 }
 
 function drawWorld() {
-  var hash = '#|' + gridString() + '|[score:' + currentScore() + ']';
-  var docuhash = '|' + gridString() + '|[' + currentScore() + ']';
+  var hash = '#|' + gridString() + '|[score:' + currentScore() + ']'+'|[highscore:' + localStorage.maxScore + '][highscoreGrid:' + localStorage.maxScoreGrid + ']';
+  var docuhash = '|' + gridString() + '|[' + currentScore() + 'h'+localStorage.maxScore+']';
 
   if (urlRevealed) {
     // Use the original game representation on the on-DOM view, as there are no
