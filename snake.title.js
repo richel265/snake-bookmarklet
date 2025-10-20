@@ -83,33 +83,13 @@ function setupEventHandlers() {
 
   window.onblur = function pauseGame() {
     gamePaused = true;
-    window.history.replaceState(null, null, location.hash + '[paused]');
+    document.title(null, null, document.title + '[paused]');
   };
 
   window.onfocus = function unpauseGame() {
     gamePaused = false;
     drawWorld();
   };
-
-  document.querySelectorAll('.expandable').forEach(function (expandable) {
-    var expand = expandable.querySelector('.expand-btn');
-    var collapse = expandable.querySelector('.collapse-btn');
-    var content = expandable.querySelector('.expandable-content');
-    expand.onclick = collapse.onclick = function () {
-      expand.classList.remove('hidden');
-      content.classList.remove('hidden');
-      expandable.classList.toggle('expanded');
-    };
-    // Hide the expand button or the content when the animation ends so those
-    // elements are not interactive anymore.
-    // Surely there's a way to do this with CSS animations more directly.
-    expandable.ontransitionend = function () {
-      var expanded = expandable.classList.contains('expanded');
-      expand.classList.toggle('hidden', expanded);
-      content.classList.toggle('hidden', !expanded);
-    };
-  });
-}
 
 function startGame() {
   grid = new Array(GRID_WIDTH * 4);
@@ -181,7 +161,7 @@ function drawWorld() {
     hash = hash.replace(/\u2800/g, whitespaceReplacementChar);
   }
 
-  history.replaceState(null, null, hash);
+  document.title = hash
 
   // Some browsers have a rate limit on history.replaceState() calls, resulting
   // in the URL not updating at all for a couple of seconds. In those cases,
@@ -192,7 +172,7 @@ function drawWorld() {
     console.warn(
       'history.replaceState() throttling detected. Using location.hash fallback'
     );
-    location.hash = hash;
+    document.title = hash;
   }
 }
 
