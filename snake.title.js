@@ -16,7 +16,6 @@ var currentDirection;
 var moveQueue;
 var hasMoved;
 var gamePaused = false;
-var urlRevealed = false;
 var whitespaceReplacementChar;
 
 function main() {
@@ -24,7 +23,6 @@ function main() {
   cleanUrl();
   setupEventHandlers();
   drawMaxScore();
-  initUrlRevealed();
   startGame();
 
   var lastFrameTime = Date.now();
@@ -93,11 +91,6 @@ function setupEventHandlers() {
     drawWorld();
   };
 
-  $('#reveal-url').onclick = function (e) {
-    e.preventDefault();
-    setUrlRevealed(!urlRevealed);
-  };
-
   document.querySelectorAll('.expandable').forEach(function (expandable) {
     var expand = expandable.querySelector('.expand-btn');
     var collapse = expandable.querySelector('.collapse-btn');
@@ -116,23 +109,6 @@ function setupEventHandlers() {
       content.classList.toggle('hidden', !expanded);
     };
   });
-}
-
-function initUrlRevealed() {
-  setUrlRevealed(Boolean(localStorage.urlRevealed));
-}
-
-// Some browsers don't display the page URL, either partially (e.g. Safari) or
-// entirely (e.g. mobile in-app web-views). To make the game playable in such
-// cases, the player can choose to "reveal" the URL within the page body.
-function setUrlRevealed(value) {
-  urlRevealed = value;
-  $('#url-container').classList.toggle('invisible', !urlRevealed);
-  if (urlRevealed) {
-    localStorage.urlRevealed = 'y';
-  } else {
-    delete localStorage.urlRevealed;
-  }
 }
 
 function startGame() {
@@ -197,12 +173,6 @@ function endGame() {
 
 function drawWorld() {
   var hash = '#|' + gridString() + '|[score:' + currentScore() + ']';
-
-  if (urlRevealed) {
-    // Use the original game representation on the on-DOM view, as there are no
-    // escaping issues there.
-    $('#url').textContent = location.href.replace(/#.*$/, '') + hash;
-  }
 
   // Modern browsers escape whitespace characters on the address bar URL for
   // security reasons. In case this browser does that, replace the empty Braille
@@ -306,43 +276,8 @@ function drawMaxScore() {
 
   var maxScorePoints = maxScore == 1 ? '1 point' : maxScore + ' points'
   var maxScoreGrid = localStorage.maxScoreGrid;
-
-  $('#max-score-points').textContent = maxScorePoints;
-  $('#max-score-grid').textContent = maxScoreGrid;
-  $('#max-score-container').classList.remove('hidden');
-
-  $('#share').onclick = function (e) {
-    e.preventDefault();
-    shareScore(maxScorePoints, maxScoreGrid);
-  };
 }
 
-// Expands the high score details if collapsed. Only done when beating the
-// highest score, to grab the player's attention.
-function showMaxScore() {
-  if ($('#max-score-container.expanded')) return
-  $('#max-score-container .expand-btn').click();
-}
-
-function shareScore(scorePoints, grid) {
-  var message = '|' + grid + '| Got ' + scorePoints +
-    ' playing this stupid snake game on the browser URL!';
-  var url = $('link[rel=canonical]').href;
-  if (navigator.share) {
-    navigator.share({text: message, url: url});
-  } else {
-    navigator.clipboard.writeText(message + '\n' + url)
-      .then(function () { showShareNote('copied to clipboard') })
-      .catch(function () { showShareNote('clipboard write failed') })
-  }
-}
-
-function showShareNote(message) {
-  var note = $("#share-note");
-  note.textContent = message;
-  note.classList.remove("invisible");
-  setTimeout(function () { note.classList.add("invisible") }, 1000);
-}
 
 // Super hacky function to pick a suitable character to replace the empty
 // Braille character (u+2800) when the browser escapes whitespace on the URL.
