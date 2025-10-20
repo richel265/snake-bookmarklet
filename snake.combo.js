@@ -202,13 +202,7 @@ function updateWorld() {
 
 function endGame() {
   var score = currentScore();
-  var maxScore = parseInt(localStorage.maxScore || 0);
-  if (score > 0 && score > maxScore && hasMoved) {
-    localStorage.maxScore = score;
-    localStorage.maxScoreGrid = gridString();
-    drawMaxScore();
-    showMaxScore();
-  }
+  console.log("Final score:", score);
 }
 
 function drawWorld() {
