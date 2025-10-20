@@ -1,6 +1,6 @@
 'use strict';
 
-var GRID_WIDTH = 31;
+var GRID_WIDTH = 36;
 var SNAKE_CELL = 1;
 var FOOD_CELL = 2;
 var UP = {x: 0, y: -1};
@@ -24,7 +24,6 @@ function main() {
   cleanUrl();
   setupEventHandlers();
   drawMaxScore();
-  initUrlRevealed();
   startGame();
 
   var lastFrameTime = Date.now();
@@ -143,26 +142,6 @@ function drawMaxScore() {
     return;
   }
 
-  var maxScorePoints = maxScore == 1 ? '1 point' : maxScore + ' points'
-  var docuMaxScorePoints = maxScore
-  var maxScoreGrid = localStorage.maxScoreGrid;
-
-}
-
-function initUrlRevealed() {
-  setUrlRevealed(Boolean(localStorage.urlRevealed));
-}
-
-// Some browsers don't display the page URL, either partially (e.g. Safari) or
-// entirely (e.g. mobile in-app web-views). To make the game playable in such
-// cases, the player can choose to "reveal" the URL within the page body.
-function setUrlRevealed(value) {
-  urlRevealed = value;
-  if (urlRevealed) {
-    localStorage.urlRevealed = 'y';
-  } else {
-    delete localStorage.urlRevealed;
-  }
 }
 
 function startGame() {
@@ -227,7 +206,7 @@ function endGame() {
 
 function drawWorld() {
   var hash = '#|' + gridString() + '|[score:' + currentScore() + ']'+'|[highscore:' + localStorage.maxScore + '][highscoreGrid:' + localStorage.maxScoreGrid + ']';
-  var docuhash = '|' + gridString() + '|[' + currentScore() + 'h'+localStorage.maxScore+']';
+  var docuhash = '|' + gridString() + '|[' + currentScore()+']';
 
   if (urlRevealed) {
     // Use the original game representation on the on-DOM view, as there are no
