@@ -310,16 +310,6 @@ function changeDirection(newDir) {
   }
   hasMoved = true;
 }
-// Expands the high score details if collapsed. Only done when beating the
-// highest score, to grab the player's attention.
-function showMaxScore() {
-}
-
-// Super hacky function to pick a suitable character to replace the empty
-// Braille character (u+2800) when the browser escapes whitespace on the URL.
-// We want to pick a character that's close in width to the empty Braille symbol
-// —so the game doesn't stutter horizontally—, and also pick something that's
-
 
 var $ = document.querySelector.bind(document);
 
