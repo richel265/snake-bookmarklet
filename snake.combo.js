@@ -41,13 +41,7 @@ function main() {
 function pickWhitespaceReplacementChar() {
   var candidates = [
     // U+0ADF is part of the Gujarati Unicode blocks, but it doesn't have an
-    // associated glyph. For some reason, Chrome renders is as totally blank and
-    // almost the same size as the Braille empty character, but it doesn't
-    // escape it on the address bar URL, so this is the perfect replacement
-    // character. This behavior of Chrome is probably a bug, and might be
-    // changed at any time, and in other browsers like Firefox this character is
-    // rendered with an ugly "undefined" glyph, so it'll get filtered out by the
-    // width or the "blankness" check in either of those cases.
+    // associated glyph.
     ['૟', 'strange symbols'],
     // U+27CB Mathematical Rising Diagonal, not a great replacement for
     // whitespace, but is close to the correct size and blank enough.
@@ -206,29 +200,20 @@ function endGame() {
 
 function drawWorld() {
   var hash = '#|' + gridString() + '|[score:' + currentScore() + ']'+'|[highscore:' + localStorage.maxScore + '][highscoreGrid:' + localStorage.maxScoreGrid + ']';
-  var docuhash = '|' + gridString() + '|[' + currentScore()+']';
+  var docuhash = '|' + gridString() + '|' + currentScore();
 
   if (urlRevealed) {
     // Use the original game representation on the on-DOM view, as there are no
     // escaping issues there.
     $('#url').textContent = location.href.replace(/#.*$/, '') + hash;
   }
-
-  // Modern browsers escape whitespace characters on the address bar URL for
-  // security reasons. In case this browser does that, replace the empty Braille
-  // character with a non-whitespace (and hopefully non-intrusive) symbol.
   if (whitespaceReplacementChar) {
     hash = hash.replace(/\u2800/g, whitespaceReplacementChar);
   }
 
   history.replaceState(null, null, hash);
   document.title = docuhash;
-
-  // Some browsers have a rate limit on history.replaceState() calls, resulting
-  // in the URL not updating at all for a couple of seconds. In those cases,
-  // location.hash is updated directly, which is unfortunate, as it causes a new
-  // navigation entry to be created each time, effectively hijacking the user's
-  // back button.
+  
   if (decodeURIComponent(location.hash) !== hash) {
     console.warn(
       'history.replaceState() throttling detected. Using location.hash fallback'
