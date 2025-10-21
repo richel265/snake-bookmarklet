@@ -200,7 +200,7 @@ function endGame() {
 
 function drawWorld() {
   var hash = '#|' + gridString() + '|[score:' + currentScore() + ']'+'|[highscore:' + localStorage.maxScore + '][highscoreGrid:' + localStorage.maxScoreGrid + ']';
-  var docuhash = '|' + gridString() + '|' + currentScore();
+  var docuhash = '|' + gridString() + '| ' + currentScore();
 
   if (urlRevealed) {
     // Use the original game representation on the on-DOM view, as there are no
