@@ -1,3 +1,4 @@
+
 'use strict';
 
 var GRID_WIDTH = 36;
@@ -78,8 +79,8 @@ function pickWhitespaceReplacementChar() {
     }
   }
 
-  // Fallback to a safe U+2591 Light Shade.
-  return ['░', 'some kind of "fog"'];
+  // Fallback to a safe U+7834 CJK Unified Ideograph-7834.
+  return ['░', 'fog'];
 }
 
 function detectBrowserUrlWhitespaceEscaping() {
@@ -200,7 +201,7 @@ function endGame() {
 
 function drawWorld() {
   var hash = '#|' + gridString() + '|[score:' + currentScore() + ']'+'|[highscore:' + localStorage.maxScore + '][highscoreGrid:' + localStorage.maxScoreGrid + ']';
-  var docuhash = '|' + gridString() + '| ' + currentScore();
+  var docuhash = '|' + titleGridString() + '| ' + currentScore();
 
   if (urlRevealed) {
     // Use the original game representation on the on-DOM view, as there are no
@@ -223,6 +224,28 @@ function drawWorld() {
   }
 }
 
+function titleGridString() {
+  var str = '';
+  for (var x = 0; x < GRID_WIDTH; x += 2) {
+    // Unicode Braille patterns are 256 code points going from 0x2800 to 0x28FF.
+    // They follow a binary pattern where the bits are, from least significant
+    // to most: ⠁⠂⠄⠈⠐⠠⡀⢀
+    // So, for example, 147 (10010011) corresponds to ⢓
+    var n = 0
+      | bitAt(x, 0) << 0
+      | bitAt(x, 1) << 1
+      | bitAt(x, 2) << 2
+      | bitAt(x + 1, 0) << 3
+      | bitAt(x + 1, 1) << 4
+      | bitAt(x + 1, 2) << 5
+      | bitAt(x, 3) << 6
+      | bitAt(x + 1, 3) << 7;
+
+    str += String.fromCharCode(0x2800 + n);
+  }
+  return str;
+}
+
 function gridString() {
   var str = '';
   for (var x = 0; x < GRID_WIDTH; x += 2) {
@@ -239,6 +262,8 @@ function gridString() {
       | bitAt(x + 1, 2) << 5
       | bitAt(x, 3) << 6
       | bitAt(x + 1, 3) << 7;
+
+    n = 0xFF ^ n;
     str += String.fromCharCode(0x2800 + n);
   }
   return str;
