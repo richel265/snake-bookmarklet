@@ -3,7 +3,7 @@
 **Warning!** This is a fork. You can find the original repo at **[epidemian/snake](https://github.com/epidemian/snake)**
 
 This fork contains bookmarklets and has had the code adapted so that you can add to your bookmark bar to be able to play this game on every website.
-This version also shows the snake game in the tab title now, using my <snake.combo.js> file..
+This version also shows the snake game in the tab title now, using my ![custom snake](snake.combo.js) file..
 
 Play the classic snake game on a URL or on the titlebar!
 
